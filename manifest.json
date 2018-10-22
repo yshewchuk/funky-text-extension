@@ -1,0 +1,12 @@
+{
+  "name": "funkyText",
+  "version": "0.1",
+  "manifest_version": 2,
+  "description": "Makes some funky text.",
+  "permissions": ["storage"],
+  "content_scripts": [{
+    "matches": ["http://*/*", "https://*/*"],
+    "js": ["funky-text.js"]
+    }],
+  "options_page": "options.html"
+}
