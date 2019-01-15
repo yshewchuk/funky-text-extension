@@ -1,7 +1,4 @@
 chrome.storage.sync.get(['funkyMatchPattern'], function(result) {
-  //disable for now
-  return;
-
   if(result.funkyMatchPattern === undefined || new RegExp(result.funkyMatchPattern).test(window.location.href)) {
     String.prototype.replaceAt=function(index, replacement) {
        return this.substr(0, index) + replacement+ this.substr(index + replacement.length);
@@ -17,19 +14,26 @@ chrome.storage.sync.get(['funkyMatchPattern'], function(result) {
          }
        }
         return result;
-    }
+    };
 
-    (function () {
-        var all = document.getElementsByTagName("*");
-       for (var i=0; i < all.length; i++) {
-            if (all[i].tagName.toLowerCase() !== 'script'
-                && all[i].tagName.toLowerCase() !== 'style'
-                && all[i].textContent.length > 0
-                && all[i].innerHTML.startsWith(all[i].textContent)) {
-
-               all[i].innerHTML = toRandomCase(all[i].textContent) + all[i].innerHTML.slice(all[i].textContent.length);
-           }
+    function updateDom(el) {
+        var current, iterator = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, { acceptNode: function(node) { return (node.parentElement.nodeName == "SCRIPT" || node.parentElement.nodeName == "STYLE") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT; } }, false);
+        while (current=iterator.nextNode()) {
+            current.nodeValue = toRandomCase(current.textContent);
         }
-    })();
+    };
+    
+    updateDom(document);
+    
+    function mutationCallback(mutationsList, observer) {
+        for(var mutation of mutationsList) {
+            for (var added of mutation.addedNodes) {
+                updateDom(added);
+            }
+        }
+    };
+
+    var observer = new MutationObserver(mutationCallback);
+    observer.observe(document, { childList: true, subtree: true });
   }
 });
