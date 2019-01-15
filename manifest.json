@@ -1,6 +1,6 @@
 {
   "name": "funkyText",
-  "version": "0.1",
+  "version": "1.0",
   "manifest_version": 2,
   "description": "Makes some funky text.",
   "permissions": ["storage"],
